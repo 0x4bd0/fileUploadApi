@@ -7,7 +7,7 @@ export class FilesController {
     @Post("one")
     @UseInterceptors(FileInterceptor("file", { dest: "./uploads" }))
     uploadSingle(@UploadedFile() file) {
-      console.log(file);
+      return file
     }
   
     @Post("many")
