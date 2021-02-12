@@ -11,5 +11,3 @@
 
 ## Note
 - You can find the {filename} in the response body of the upload endpoint by the name of : {filename}
-
-

@@ -1,22 +1,31 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
-describe('AppController', () => {
-  let appController: AppController;
+import { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import * as request from 'supertest';
+import { AppModule } from './app.module';
 
-  beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
-      controllers: [AppController],
-      providers: [AppService],
+describe('file upload test e2e', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
     }).compile();
-
-    appController = app.get<AppController>(AppController);
+    app = moduleRef.createNestApplication();
+    await app.init();
   });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
-    });
+  it('should allow for file uploads', async () => {
+    return request(app.getHttpServer())
+      .post('/files/one')
+      .attach('file', './test.txt')
+      .field('name', 'test')
+      .expect(201);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 });
